@@ -1,0 +1,11 @@
+[Unit]
+Description=once
+
+[Service]
+User=app
+WorkingDirectory=/home/app
+ExecStart=/usr/bin/python app.py 8020 > /dev/null 2>&1
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
