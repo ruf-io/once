@@ -3,7 +3,7 @@ Description=once
 
 [Service]
 User=app
-WorkingDirectory=/home/app
+WorkingDirectory=/home/once/app
 ExecStart=/usr/bin/python app.py 8020 > /dev/null 2>&1
 Restart=always
 StandardOutput=null
