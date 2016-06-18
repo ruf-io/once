@@ -32,29 +32,44 @@ class App:
 				return '<html><body>' + output.lstrip() + '<br><br><form action="/" method="POST"><input type="hidden" name="content" value="' + output.lstrip() + '"><input type="submit" value="Re-Save with a new URL"></form></body></html>'
 			else:
 				raise web.seeother('/')
-		return '<html><body><form action="/" method="POST"><textarea name="content" rows="20" cols="100"></textarea><br><input type="submit" size="100"></form></body></html>'
+		return """<html><body><form action="/" method="POST">
+			<fieldset style="float:left;">
+				<textarea name="content0" rows="20" cols="100"></textarea><br>
+				<textarea name="content1" rows="20" cols="100"></textarea><br>
+				<textarea name="content2" rows="20" cols="100"></textarea><br>
+				<textarea name="content3" rows="20" cols="100"></textarea><br>
+				<textarea name="content4" rows="20" cols="100"></textarea>
+			</fieldset>
+			<input type="submit" style="float:left; font-size:2em;">
+			</form></body></html>"""
 
 	def POST(self, ignored):
 		v = web.input()
-		if('content' in v):
-			content = v['content']
-			try:
-				content = json.dumps(json.loads(content))
-			except:
+		if 'content0' in v:
+			output = "<html><body>REMEMBER THESE CAN ONLY BE LOADED ONCE!<br><table><tr><td>Content</td><td>URL</td></tr>"
+			content = v['content0']
+			ct = 1
+			while len(content) > 0:
 				try:
-					content = json.dumps(yaml.load(content))
-					if content.find('"') == 0:
-						content = content[1:-1]
+					content = json.dumps(json.loads(content))
 				except:
-					pass
-			secret_key = shortuuid.ShortUUID().random(length=16)
-			cipher = AES.new(secret_key, AES.MODE_ECB)
-			content_key = shortuuid.ShortUUID().random(length=16)
-			f = open('/home/app/files/' + content_key, 'w')
-			content += ' ' * (16 - (len(content) % 16))
-			f.write(base64.b64encode(cipher.encrypt(content)))
-			f.close()
-			return "URL is:\n\nhttps://once.ruf.io/" + content_key + "~" + secret_key + "\n\n\nREMEMBER - you can only load it ONCE"
+					try:
+						content = json.dumps(yaml.load(content))
+						if content.find('"') == 0:
+							content = content[1:-1]
+					except:
+						pass
+				secret_key = shortuuid.ShortUUID().random(length=16)
+				cipher = AES.new(secret_key, AES.MODE_ECB)
+				content_key = shortuuid.ShortUUID().random(length=16)
+				f = open('/home/app/files/' + content_key, 'w')
+				content += ' ' * (16 - (len(content) % 16))
+				f.write(base64.b64encode(cipher.encrypt(content)))
+				f.close()
+				output += "<tr><td>" + content[0:16] + "</td><td>https://once.ruf.io/" + content_key + "~" + secret_key + "</td></tr>"
+				content = ''
+				if 'content'+str(ct) in v:
+					content = v['content'+str(ct)]
 		else:
 			raise web.seeother('/')
 
