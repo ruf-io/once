@@ -19,12 +19,12 @@ class App:
 	def GET(self, content_key_secret_key):
 		if content_key_secret_key:
 			[content_key, secret_key] = content_key_secret_key.split('~')
-			if os.path.isfile('/home/app/files/' + content_key):
+			if os.path.isfile('/home/once/app/files/' + content_key):
 				cipher = AES.new(secret_key, AES.MODE_ECB)
-				f = open('/home/app/files/' + content_key)
+				f = open('/home/once/app/files/' + content_key)
 				output = cipher.decrypt(base64.b64decode(f.read()))
 				f.close()
-				os.remove('/home/app/files/' + content_key)
+				os.remove('/home/once/app/files/' + content_key)
 				accept_header = web.ctx.env.get('HTTP_ACCEPT')
 				if accept_header == None or accept_header.find('xhtml') == -1:
 					web.header('Content-Type', 'text/plain')
@@ -62,7 +62,7 @@ class App:
 				secret_key = shortuuid.ShortUUID().random(length=16)
 				cipher = AES.new(secret_key, AES.MODE_ECB)
 				content_key = shortuuid.ShortUUID().random(length=16)
-				f = open('/home/app/files/' + content_key, 'w')
+				f = open('/home/once/app/files/' + content_key, 'w')
 				content += ' ' * (16 - (len(content) % 16))
 				f.write(base64.b64encode(cipher.encrypt(content)))
 				f.close()
