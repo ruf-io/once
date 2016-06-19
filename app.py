@@ -34,13 +34,13 @@ class App:
 				raise web.seeother('/')
 		return """<html><body><form action="/" method="POST">
 			<fieldset style="float:left;">
-				<textarea name="content0" rows="20" cols="100"></textarea><br>
-				<textarea name="content1" rows="20" cols="100"></textarea><br>
-				<textarea name="content2" rows="20" cols="100"></textarea><br>
-				<textarea name="content3" rows="20" cols="100"></textarea><br>
-				<textarea name="content4" rows="20" cols="100"></textarea>
+				<textarea name="content0" rows="5" cols="80"></textarea><br><br>
+				<textarea name="content1" rows="5" cols="80"></textarea><br><br>
+				<textarea name="content2" rows="5" cols="80"></textarea><br><br>
+				<textarea name="content3" rows="5" cols="80"></textarea><br><br>
+				<textarea name="content4" rows="5" cols="80"></textarea>
 			</fieldset>
-			<input type="submit" style="float:left; font-size:2em;">
+			<input type="submit" style="float:left; font-size:4em;">
 			</form></body></html>"""
 
 	def POST(self, ignored):
