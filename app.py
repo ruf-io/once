@@ -29,7 +29,7 @@ class App:
 				if accept_header == None or accept_header.find('xhtml') == -1:
 					web.header('Content-Type', 'text/plain')
 					return output.lstrip()
-				return '<html><body>' + output.lstrip() + '<br><br><form action="/" method="POST"><input type="hidden" name="content" value="' + output.lstrip() + '"><input type="submit" value="Re-Save with a new URL"></form></body></html>'
+				return '<html><body>' + output.lstrip() + '<br><br><form action="/" method="POST"><input type="hidden" name="content0" value="' + output.lstrip() + '"><input type="submit" value="Re-Save with a new URL"></form></body></html>'
 			else:
 				raise web.seeother('/')
 		return """<html><body><form action="/" method="POST">
