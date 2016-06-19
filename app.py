@@ -66,7 +66,7 @@ class App:
 				content += ' ' * (16 - (len(content) % 16))
 				f.write(base64.b64encode(cipher.encrypt(content)))
 				f.close()
-				output += "<tr><td>" + content[0:16] + "</td><td>https://once.ruf.io/" + content_key + "~" + secret_key + "</td></tr>"
+				output += "<tr><td>" + content[0:16] + "</td><td>https://1.ruf.io/" + content_key + "~" + secret_key + "</td></tr>"
 				content = ''
 				ct += 1
 				if 'content'+str(ct) in v:
