@@ -46,12 +46,10 @@ class App:
 	def POST(self, ignored):
 		v = web.input()
 		if 'content0' in v:
-			web.debug('found content')
 			output = "<html><body>REMEMBER THESE CAN ONLY BE LOADED ONCE!<br><table><tr><td>Content</td><td>URL</td></tr>"
 			content = v['content0']
-			ct = 1
+			ct = 0
 			while len(content) > 0:
-				web.debug('content has length')
 				try:
 					content = json.dumps(json.loads(content))
 				except:
@@ -70,9 +68,9 @@ class App:
 				f.close()
 				output += "<tr><td>" + content[0:16] + "</td><td>https://once.ruf.io/" + content_key + "~" + secret_key + "</td></tr>"
 				content = ''
+				ct += 1
 				if 'content'+str(ct) in v:
 					content = v['content'+str(ct)]
-				web.debug('next content field: ' + content)
 			return output
 		else:
 			raise web.seeother('/')
