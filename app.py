@@ -29,44 +29,36 @@ class App:
 				if accept_header == None or accept_header.find('xhtml') == -1:
 					web.header('Content-Type', 'text/plain')
 					return output.lstrip()
-				return '<html><body>' + output.lstrip() + '<br><br><form action="/" method="POST"><input type="hidden" name="content0" value="' + output.lstrip() + '"><input type="submit" value="Re-Save with a new URL"></form></body></html>'
+				return '<html><body><form action="/" method="POST"><textarea name="c0" rows="5" cols="80">' + output.lstrip() + '</textarea><input type="submit" value="Re-Save with a new URL"><input type="checkbox" name="nc0" title="decode json/yaml?"/></form></body></html>'
 			else:
 				raise web.seeother('/')
-		return """<html><body><form action="/" method="POST">
-			<fieldset style="float:left;">
-				<textarea name="content0" rows="5" cols="80"></textarea><br><br>
-				<textarea name="content1" rows="5" cols="80"></textarea><br><br>
-				<textarea name="content2" rows="5" cols="80"></textarea><br><br>
-				<textarea name="content3" rows="5" cols="80"></textarea><br><br>
-				<textarea name="content4" rows="5" cols="80"></textarea>
-			</fieldset>
-			<input type="submit" style="float:left; font-size:4em;">
-			</form></body></html>"""
+		return '<html><body><form action="/" method="POST"><fieldset style="float:left;">' + ''.join(['<textarea name="c' + str(n) + '" rows="5" cols="80"></textarea><input type="checkbox" name="nc' + str(n) + '" title="decode json/yaml?"/><br><br>' for n in range(0,5)]) + '</fieldset><input type="submit" style="float:left; font-size:4em;"></form></body></html>'
 
 	def POST(self, ignored):
 		v = web.input()
 		if 'content0' in v:
-			output = "<html><body>REMEMBER THESE CAN ONLY BE LOADED ONCE!<br><table><tr><td>Content</td><td>URL</td></tr>"
-			content = v['content0']
+			output = "<html><body>THESE URLS CAN ONLY BE LOADED ONCE!<br><dl><dd>Content</dd><dt>URL</dt>"
+			content = v['c0']
 			ct = 0
 			while len(content) > 0:
-				try:
-					content = json.dumps(json.loads(content))
-				except:
+				if ('nc' + ct) not in v or v['nc' + ct] != 1:
 					try:
-						content = json.dumps(yaml.load(content))
-						if content.find('"') == 0:
-							content = content[1:-1]
+						content = json.dumps(json.loads(content))
 					except:
-						pass
+						try:
+							content = json.dumps(yaml.load(content))
+							if content.find('"') == 0:
+								content = content[1:-1]
+						except:
+							pass
 				secret_key = shortuuid.ShortUUID().random(length=16)
 				cipher = AES.new(secret_key, AES.MODE_ECB)
 				content_key = shortuuid.ShortUUID().random(length=16)
-				f = open('/home/once/app/files/' + content_key, 'w')
+				f = open(os.environ['FILE_DIR'] + content_key, 'w')
 				content += ' ' * (16 - (len(content) % 16))
 				f.write(base64.b64encode(cipher.encrypt(content)))
 				f.close()
-				output += "<tr><td>" + content[0:16] + "</td><td>https://1.ruf.io/" + content_key + "~" + secret_key + "</td></tr>"
+				output += "<dd>" + content[0:16] + "</dd><dt>https://" + os.environ['DOMAIN'] + "/" + content_key + "~" + secret_key + "</dt>"
 				content = ''
 				ct += 1
 				if 'content'+str(ct) in v:
